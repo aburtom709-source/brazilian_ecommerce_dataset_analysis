@@ -6,8 +6,8 @@ This project exploraty data analysis of the Brazilian Ecommerce dataset using Py
 This goal is to explore an ecommerce dataset to understand sales performance, customer behavior, and key business metrics.
 
 ## 🛒 Dataset
-Source: Olist
-Name: Brazilian E-commerce Public Dataset
+  - Source: Olist
+  - Name: Brazilian E-commerce Public Dataset
 
 ## 🧹 Data cleaning and preparation
 The dataset was prepared by:
