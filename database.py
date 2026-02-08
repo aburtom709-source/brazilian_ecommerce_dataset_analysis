@@ -65,15 +65,15 @@ categories_clean = raw["categories"]
 
 # --- ORDER ITEMS AGGREGATION ---
 
-# - Avoid duplicate orders caused by multiple items
-# - Revenue = sum of item prices + freight
+# Avoid duplicate orders caused by multiple items
+# Revenue = sum of item prices + freight
 items_summary = items_clean.groupby('order_id').agg({
     'price': 'sum',
     'freight_value': 'sum'
 }).reset_index()
 
-# - Assign one category per order
-# - Use first product to avoid duplicates
+# Assign one category per order
+# Use first product to avoid duplicates
 first_item = (
     items_clean
     .drop_duplicates(subset="order_id")
@@ -304,6 +304,7 @@ plt.xlabel('Month')
 plt.ylabel('Revenue')
 plt.xticks(rotation=45)
 plt.tight_layout()
+plt.savefig("images/monthly_revenue.png")
 plt.show()
 
 # Seasonality chart
@@ -312,12 +313,14 @@ plt.bar(seasonality.index, seasonality.values)
 plt.title('Revenue Seasonality by Month')
 plt.xlabel('Month')
 plt.ylabel('Average Revenue')
+plt.savefig("images/seasonality.png")
 plt.show()
       
 # Revenue by RFM segment
 rfm.groupby('Segment')['Monetary'].sum().plot(kind='bar')
 plt.title('Revenue by RFM Segment')
 plt.ylabel('Revenue')
+plt.savefig("images/revenue_by_rfm.png")
 plt.show()
 
 # Delivery time distribution
@@ -325,6 +328,7 @@ plt.hist(df_clean['delivery_time'].dropna(), bins=30)
 plt.title('Delivery Time Distribution')
 plt.xlabel('Days')
 plt.ylabel('Orders')
+plt.savefig("images/delivery_time.png")
 plt.show()
 
 # --- SAVE CLEAN DATAFRAME TO CSV ---
