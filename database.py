@@ -65,18 +65,15 @@ categories_clean = raw["categories"]
 
 # --- ORDER ITEMS AGGREGATION ---
 
-# Purpose:
-# - Avoid order duplication caused by multiple items
-# - Revenue calculated from item prices + freight
+# - Avoid duplicate orders caused by multiple items
+# - Revenue = sum of item prices + freight
 items_summary = items_clean.groupby('order_id').agg({
     'price': 'sum',
     'freight_value': 'sum'
 }).reset_index()
 
-# Business decision:
-# - Assign ONE category per order
-# - First product chosen to avoid duplication
-# - Trade-off accepted for high-level category analysis
+# - Assign one category per order
+# - Use first product to avoid duplicates
 first_item = (
     items_clean
     .drop_duplicates(subset="order_id")
@@ -87,8 +84,7 @@ first_item = (
     )
 )
 
-# payment_value kept for validation only
-# Revenue is NOT calculated from payments
+# Keep payment_value only for checking
 payments_summary = payments_clean.groupby('order_id').agg({
     'payment_value':'sum'
 }).reset_index()
@@ -113,8 +109,7 @@ print("\nNegatives freight value: ",(df_clean['freight_value'] < 0).sum())
 
 # --- BUSINESS FEATURES ---
 
-# price + freight charged to customer
-# payment_value used only for consistency checks
+# Revenue = price + freight_value
 df_clean['revenue'] = df_clean['price'] + df_clean['freight_value']
 
 # Total revenue
@@ -239,7 +234,7 @@ print("\nRFM summary:")
 print(rfm[['Recency','Frequency','Monetary']].describe())
 
 # --- RFM SCORING ---
-# Score Recency: lower days = higher score
+# Score Recency
 rfm['R_score'] = pd.qcut(
     rfm['Recency'],
     q=3,
@@ -247,7 +242,7 @@ rfm['R_score'] = pd.qcut(
 ).astype(int)
 
 # Score Frequency
-# Frequency bins defined to separate one-time, repeat and high-frequency customers
+# Frequency groups: one-time, repeat, and frequent customers
 rfm['F_score'] = pd.cut(
     rfm['Frequency'],
     bins=[0, 1, 2, float('inf')],
@@ -255,7 +250,7 @@ rfm['F_score'] = pd.cut(
 ).astype(int)
 
 # Score Monetary
-# If there are many equal values, I would apply a ranking (using rank(method='first')) before using qcut to avoid binning issues
+# If there are many equal values, I would apply a ranking using rank(method='first') before using qcut to avoid binning issues
 rfm['M_score'] = pd.qcut(
     rfm['Monetary'],
     q=3,
